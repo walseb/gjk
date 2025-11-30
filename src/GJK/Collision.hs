@@ -27,7 +27,7 @@ the case where you are writing your own support functions.
 
   collision 10 (poly1, polySupport) (poly2, polySupport) == Just True
 -}
-collision :: Int -> Mink a -> Mink b -> Maybe Bool
+collision :: (Ord n, Fractional n) => Int -> Mink n a -> Mink n b -> Maybe Bool
 collision limit minkA minkB =
   let
     d1 = (1.0, -1.0)
@@ -40,7 +40,7 @@ collision limit minkA minkB =
       _                -> Nothing
 
 -- | Prepare the input for doSimplex and start the calculation.
-collision2 :: Int -> Mink a -> Mink b -> (Double, Double) -> (Double, Double) -> Maybe Bool
+collision2 :: (Ord n, Fractional n) => Int -> Mink n a -> Mink n b -> (n, n) -> (n, n) -> Maybe Bool
 collision2 limit minkA minkB c b =
   let
     -- simplex is cb and direction is (cb x c0 x cb)
@@ -68,7 +68,7 @@ to speak) a is obtained by finding the direction of the origin from the
 currently building simplex, and finding the extremal point on the boundry in
 that direction.
 -}
-doSimplex :: Int -> Int -> Mink a  -> Mink b -> ([Pt], Pt) -> Maybe (Bool, ([Pt], Pt))
+doSimplex :: (Ord n, Fractional n) => Int -> Int -> Mink n a  -> Mink n b -> ([Pt n], Pt n) -> Maybe (Bool, ([Pt n], Pt n))
 doSimplex limit depth minkA minkB (sim, d) =
   let
     maybea = calcMinkSupport minkA minkB d
@@ -79,7 +79,7 @@ doSimplex limit depth minkA minkB (sim, d) =
 
 -- | Actual doSimplex calculation. doSimplex handles the error case of
 -- calcMinkSupport and feeds a real a to doSimplex2.
-doSimplex2 :: Int -> Int -> Mink a  -> Mink b -> ([Pt], Pt) -> (Double, Double) -> Maybe (Bool, ([Pt], Pt))
+doSimplex2 :: (Ord n, Fractional n) => Int -> Int -> Mink n a -> Mink n b -> ([Pt n], Pt n) -> (n, n) -> Maybe (Bool, ([Pt n], Pt n))
 doSimplex2 limit depth minkA minkB (sim, d) a =
   let
     notPastOrig = (dot a d < 0)
@@ -102,7 +102,7 @@ doSimplex2 limit depth minkA minkB (sim, d) a =
  - a new search direction based on the simplex's relation to the origin, in the case
  - where there is no containment.
  -}
-enclosesOrigin :: Pt -> [Pt] -> (Bool, ([Pt], Pt))
+enclosesOrigin :: (Ord n, Fractional n) => Pt n -> [Pt n] -> (Bool, ([Pt n], Pt n))
 enclosesOrigin a sim =
   case sim of
     -- 0-simplex case
@@ -113,7 +113,7 @@ enclosesOrigin a sim =
 
 -- | Simplex is a single point, we will be adding a to the simplex one way or
 -- another (the new simplex will be either [a,b] or [a])
-handle0Simplex :: Pt -> Pt -> (Bool, ([Pt], Pt))
+handle0Simplex :: (Ord n, Fractional n) => Pt n -> Pt n -> (Bool, ([Pt n], Pt n))
 handle0Simplex a b =
   let
     -- line given by adding our new point
@@ -127,7 +127,7 @@ handle0Simplex a b =
 -- | Simplex is a line segment [b,c], adding 'a' gives us a 2-Simplex. We now
 -- either enclose the origin, or will be replacing the simplex with the closest
 -- sub-component to the origin.
-handle1Simplex :: Pt -> Pt -> Pt -> (Bool, ([Pt], Pt))
+handle1Simplex :: (Ord n, Fractional n) => Pt n -> Pt n -> Pt n -> (Bool, ([Pt n], Pt n))
 handle1Simplex a b c =
   let
     -- a is our new local point of reference

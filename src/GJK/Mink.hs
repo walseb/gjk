@@ -9,10 +9,10 @@ module GJK.Mink
 import GJK.Point (Pt, sub, neg)
 
 -- | Simple alias for boundary objects bundled with a support function
-type Mink a = (a, a -> Pt -> Maybe Pt)
+type Mink n a = (a, a -> Pt n -> Maybe (Pt n))
 
 -- | Calculate the support of the Minkowski difference of two Mink's
-calcMinkSupport :: Mink a -> Mink b -> (Double, Double) -> Maybe (Double, Double)
+calcMinkSupport :: (Ord n, Fractional n) => Mink n a -> Mink n b -> (n, n) -> Maybe (n, n)
 calcMinkSupport (objA, suppA) (objB, suppB) d =
   let
     maybep1 = suppA objA (neg d)

@@ -17,38 +17,38 @@ module GJK.Point
   ) where
 
 -- | Simple alias for a two dimentional point
-type Pt = (Double, Double)
+type Pt n = (n, n)
 
 -- | Dot product of given points
-dot :: Pt -> Pt -> Double
+dot :: (Num n) => Pt n -> Pt n -> n
 dot (x1,y1) (x2,y2) = (x1*x2) + (y1*y2)
 
 -- | Subtract a from b
-sub :: Pt -> Pt -> Pt
+sub :: (Eq n, Num n, Fractional n) => Pt n -> Pt n -> Pt n
 sub (ax, ay) (bx,by) = (bx-ax, by-ay)
 
 -- | Alias for sub - reads better in some cases - as in "from a to b"
-from :: Pt -> Pt -> Pt
-from  = sub
+from :: (Eq n, Fractional n) => Pt n -> Pt n -> Pt n
+from = sub
 
 -- | Add a and b
-add :: Pt -> Pt -> Pt
+add :: (Num n) => Pt n -> Pt n -> Pt n
 add (ax, ay) (bx,by) = (bx+ax, by+ay)
 
 -- | Multiply x and y with n
-mul :: Double -> Pt -> Pt
+mul :: (Num n) => n -> Pt n -> Pt n
 mul n (x,y) = (n*x, n*y)
 
 -- | Negation
-neg :: Pt -> Pt
+neg :: (Num n) => Pt n -> Pt n
 neg (x,y) = (-x,-y)
 
 -- | 2D cross product
-cross2D :: Pt -> Pt -> Double
+cross2D :: (Num n) => Pt n -> Pt n -> n
 cross2D (ax, ay) (bx, by) = ax*by - ay*bx
 
 -- | Implements a x (b x c) = b(a.c) - c(a.b)
-trip :: Pt -> Pt -> Pt -> Pt
+trip :: (Eq n, Fractional n) => Pt n -> Pt n -> Pt n -> Pt n
 trip a b c =
   let
     bac = mul (dot a c) b
@@ -57,17 +57,17 @@ trip a b c =
     sub cab bac
 
 -- | Perpendicular to a in direction of b (2D case)
-perp :: Pt -> Pt -> Pt
+perp :: (Eq n, Fractional n) => Pt n -> Pt n -> Pt n
 perp a b = trip a b a
 
 -- | Check if the dot product of a and by is greater than 0 and the direction
 -- is same.
-isSameDirection :: Pt -> Pt -> Bool
+isSameDirection :: (Ord n, Num n) => Pt n -> Pt n -> Bool
 isSameDirection a b = dot a b > 0
 
 -- | Get the direction vector of given points.
 -- Pass bc as first parameter.
-getDirectionVector :: Pt -> Pt -> Pt
+getDirectionVector :: (Eq n, Fractional n) => Pt n -> Pt n -> Pt n
 getDirectionVector (x1, y1) (x2, y2) =
   let
     -- try the triple cross product

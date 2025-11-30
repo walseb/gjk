@@ -11,7 +11,7 @@ import GJK.Collision (collision)
 import Data.Maybe (fromMaybe)
 
 -- | Support function
-polySupport :: [Pt] -> Pt -> Maybe Pt
+polySupport :: (Ord n, Fractional n) => [Pt n] -> Pt n -> Maybe (Pt n)
 polySupport list d =
     let
         dotList = fmap (dot d) list
@@ -28,6 +28,6 @@ safeMaximum [] = Nothing
 safeMaximum list = Just $ maximum list
 
 -- | Check if a and b collide
-isCollision :: [Pt] -> [Pt] -> Bool
+isCollision :: (Ord n, Fractional n) => [Pt n] -> [Pt n] -> Bool
 isCollision a b =
   fromMaybe False $ collision 1 (a, polySupport) (b, polySupport)
